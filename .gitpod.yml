@@ -1,10 +1,10 @@
-image: jaetoxi/eosgitpod:v0.0.1
+image: hub500/amaxwebide:0.0.5
 
 ports:
 - port: 3000
   onOpen: ignore
 - port: 8000
-  onOpen: ignore
+  onOpen: open-browser
 - port: 8080
   onOpen: ignore
 - port: 8888
@@ -12,9 +12,20 @@ ports:
 - port: 9876
   onOpen: ignore
 
+# https://www.gitpod.io/docs/configure/workspaces/tasks
 tasks:
 - before: cd webapp
   init: yarn
   command: nginx -c $PWD/nginx.conf; npx webpack-dev-server
-- before: cleos wallet unlock --password </password
-  command: nodeos --config-dir ~/eosio/chain/config --data-dir ~/eosio/chain/data -e -p eosio --plugin eosio::chain_api_plugin --contracts-console
+
+- name: amnod runing
+  before: amcli wallet unlock --password </password
+  command: amnod --config-dir ~/eosio/chain/config --data-dir ~/eosio/chain/data -e -p amax --plugin eosio::chain_api_plugin --contracts-console
+
+- name: deploy-amax.token
+  command: sh ./deploy-amax.token.sh
+  openMode: split-right
+
+- name: test-talk
+  command: sh ./test-talk.sh
+  openMode: split-right
